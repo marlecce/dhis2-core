@@ -38,20 +38,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hisp.dhis.DhisConvenienceTest;
-import org.hisp.dhis.analytics.AggregationType;
-import org.hisp.dhis.analytics.AnalyticsAggregationType;
-import org.hisp.dhis.analytics.AnalyticsManager;
-import org.hisp.dhis.analytics.DataQueryParams;
-import org.hisp.dhis.analytics.DataType;
+import org.hisp.dhis.analytics.*;
 import org.hisp.dhis.common.DimensionalItemObject;
 import org.hisp.dhis.common.ListMap;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.YearlyPeriodType;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @author Lars Helge Overland
@@ -66,6 +67,15 @@ public class AnalyticsManagerTest
 
         private AnalyticsManager analyticsManager;
 
+        @Mock
+        private QueryPlanner queryPlanner;
+
+        @Mock
+        private JdbcTemplate jdbcTemplate;
+
+        @Rule
+        public MockitoRule mockitoRule = MockitoJUnit.rule();
+        
         @Parameterized.Parameter
         public String financialYear;
 
@@ -82,7 +92,7 @@ public class AnalyticsManagerTest
         @Before
         public void setUp()
         {
-            analyticsManager = new JdbcAnalyticsManager();
+            analyticsManager = new JdbcAnalyticsManager(queryPlanner, jdbcTemplate);
         }
 
         @Test
@@ -120,10 +130,19 @@ public class AnalyticsManagerTest
 
     public static class SingleExecution {
 
+        @Mock
+        private QueryPlanner queryPlanner;
+
+        @Mock
+        private JdbcTemplate jdbcTemplate;
+
+        @Rule
+        public MockitoRule mockitoRule = MockitoJUnit.rule();
+        
         @Test
         public void testReplaceDataPeriodsWithAggregationPeriods()
         {
-            AnalyticsManager analyticsManager = new JdbcAnalyticsManager();
+            AnalyticsManager analyticsManager = new JdbcAnalyticsManager( queryPlanner, jdbcTemplate );
             Period y2012 = createPeriod( "2012" );
 
             AnalyticsAggregationType aggregationType = new AnalyticsAggregationType(

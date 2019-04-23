@@ -62,7 +62,10 @@
   
   <!-- Routine analytics -->
   
-  <bean id="org.hisp.dhis.analytics.AnalyticsManager" class="org.hisp.dhis.analytics.data.JdbcAnalyticsManager" />
+  <bean id="org.hisp.dhis.analytics.AnalyticsManager" class="org.hisp.dhis.analytics.data.JdbcAnalyticsManager" >
+    <constructor-arg index="0" ref="org.hisp.dhis.analytics.QueryPlanner"/>
+    <constructor-arg index="1" ref="readOnlyJdbcTemplate"/>
+  </bean>
   
   <bean id="org.hisp.dhis.analytics.RawAnalyticsManager" class="org.hisp.dhis.analytics.data.JdbcRawAnalyticsManager" />
   
@@ -70,7 +73,10 @@
   
   <bean id="org.hisp.dhis.analytics.AnalyticsService" class="org.hisp.dhis.analytics.data.DefaultAnalyticsService" />
   
-  <bean id="org.hisp.dhis.analytics.QueryPlanner" class="org.hisp.dhis.analytics.data.DefaultQueryPlanner" />
+  <bean id="org.hisp.dhis.analytics.QueryPlanner" class="org.hisp.dhis.analytics.data.DefaultQueryPlanner" >
+    <constructor-arg index="0" ref="org.hisp.dhis.analytics.QueryValidator"/>
+    <constructor-arg index="1" ref="org.hisp.dhis.analytics.partition.PartitionManager"/>
+  </bean>
   
   <bean id="org.hisp.dhis.analytics.QueryValidator" class="org.hisp.dhis.analytics.data.DefaultQueryValidator" />
 
